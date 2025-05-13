@@ -2,27 +2,29 @@ pipeline {
     agent any
 
     tools {
-        nodejs "NodeJS 18"  // Ensure this matches the Node version installed in Jenkins global tools
+        nodejs "NodeJS 18"  // Make sure this matches the name in Jenkins > Global Tool Configuration
     }
 
     stages {
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                bat 'npm install'
             }
         }
 
         stage('Build') {
             steps {
-                sh 'npm start &'
-                sleep time: 5, unit: 'SECONDS'
-                sh 'curl http://localhost:3000'
+                bat '''
+                    start /b cmd /c "npm start"
+                    timeout /t 5 >nul
+                    curl http://localhost:3000
+                '''
             }
         }
 
         stage('Test') {
             steps {
-                sh 'npm test'
+                bat 'npm test'
             }
         }
     }
